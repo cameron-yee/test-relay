@@ -1,25 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Suspense } from 'react'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 
-function App() {
+import { RelayEnvironmentProvider } from 'react-relay/hooks'
+
+import RelayEnvironment from './relay/RelayEnvironment'
+
+import Home from './pages'
+import UserPostsPage from './pages/UserPostsPage'
+
+import './App.css'
+
+function App({ preloadedQuery }) {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <RelayEnvironmentProvider environment={RelayEnvironment}>
+      <Suspense fallback={<p>Loading...</p>}>
+        <div className='layout'>
+          <Router>
+            <Routes>
+              <Route
+                exact
+                path='/'
+                element={<Home preloadedQuery={preloadedQuery} />}
+              />
+              <Route
+                element={<UserPostsPage />}
+                path='/user/:id'
+              />
+            </Routes>
+          </Router>
+        </div>
+      </Suspense>
+    </RelayEnvironmentProvider>
+  )
 }
 
-export default App;
+export default App
